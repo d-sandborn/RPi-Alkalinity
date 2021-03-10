@@ -2,13 +2,9 @@
 RPi Alkalinity
 Version: v0.2 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
-For works using this code please cite:
-    Sandborn, D.E., Minor E.C., Hill, C. (2021)
 
-"""
+This file contains code that is largely the work of Measurement Computing Corporation.
 
-
-"""
     MCC 128 Functions Demonstrated:
         mcc128.a_in_read
         mcc128.a_in_mode_write
@@ -25,7 +21,7 @@ from time import sleep
 from sys import stdout
 from daqhats import mcc128, OptionFlags, HatIDs, HatError, AnalogInputMode, \
     AnalogInputRange
-from daqhats_utils import select_hat_device, enum_mask_to_string, \
+from utils.daqhats_utils import select_hat_device, enum_mask_to_string, \
     input_mode_to_string, input_range_to_string
 
 # Constants
@@ -33,6 +29,20 @@ CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
 def get_mV():
+    """
+    
+
+    Raises
+    ------
+    Exception
+       Various daqhat errors.
+
+    Returns
+    -------
+    value : float
+        Value in V of the differential output of channel 0 from DAQ HAT 128.
+
+    """
     options = OptionFlags.DEFAULT
     low_chan = 0
     high_chan = 3

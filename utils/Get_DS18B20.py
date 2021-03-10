@@ -35,7 +35,3 @@ def get_temp():
         temp_string = lines[1][equals_pos+2:]
         temp_c = float(temp_string) / 1000.0
         return temp_c
-	
-#while True:
-	#print(read_temp())	
-	#time.sleep(1)

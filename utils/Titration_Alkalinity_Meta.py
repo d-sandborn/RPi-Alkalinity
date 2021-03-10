@@ -11,12 +11,13 @@ import pandas as pd
 from datetime import date
 from os import path
 import numpy as np
+from pathlib import Path
 
 class AlkalinityMetadata:
     def __init__(self, filename, filepath, mass, salinity):
-        system = pd.read_csv("System_Info.csv")
+        system = pd.read_csv(Path("utils/System_Info.csv"))
         self.filename = filename
-        self.filepath = filepath+'\\Data\\'
+        self.filepath = filepath #ends in /data
         self.mass = mass/1000 #convert to kg for Calkulate
         self.salinity = salinity
         self.molinity = system['titrant_HCl_molinity'][0]
@@ -48,9 +49,9 @@ class AlkalinityMetadata:
         
     def Metadata_Export(self):
         #add to existing metadata file, create with headers if it doesn't exist
-        if path.exists(self.filepath+"Alkalinity_Meta.csv"):
-            self.new_meta.to_csv(self.filepath+"Alkalinity_Meta.csv", mode='a', header=False, index = False)
+        if path.exists(self.filepath/"Alkalinity_Meta.csv"):
+            self.new_meta.to_csv(self.filepath/"Alkalinity_Meta.csv", mode='a', header=False, index = False)
         else:
-            self.new_meta.to_csv(self.filepath+"Alkalinity_Meta.csv", mode='a', header=True, index = False)
+            self.new_meta.to_csv(self.filepath/"Alkalinity_Meta.csv", mode='a', header=True, index = False)
        
         print("Metadata exported to Alkalinity_Meta.csv")

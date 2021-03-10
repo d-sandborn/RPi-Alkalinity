@@ -13,15 +13,16 @@ import pandas as pd
 import calkulate as calk
 import os
 from datetime import date
+from pathlib import Path
 
 #Utilities
-from Titration import RunTitration
-from Titration_Alkalinity_Meta import AlkalinityMetadata
-from Probe_Calibration import ProbeCalibration
+from utils.Titration import RunTitration
+from utils.Titration_Alkalinity_Meta import AlkalinityMetadata
+from utils.Probe_Calibration import ProbeCalibration
 
 #Instruments
-from Get_MCC128 import get_mV
-from Get_DS18B20 import get_temp
+from utils.Get_MCC128 import get_mV
+from utils.Get_DS18B20 import get_temp
 
 
 header = "Alkalinity titration with RPi_Alkalinity system on "+str(date.today())
@@ -35,13 +36,13 @@ choice = 0
 while choice != 6:
     choice = int(input("--> "))
     if choice == 1:
-        #Initialize and conduct titration
+        """Initialize and conduct titration"""
         titration = RunTitration()
         titrant_molinity, datasheet = titration.Titrate()
         
         #File Export
         filename = titration.SampleID+".csv"
-        filepath = os.getcwd()
+        filepath = Path(os.getcwd()+"/data")
         datasheet.to_csv(filename, index = False)
         print(".csv titration file created.")
         Alk_meta = AlkalinityMetadata(filename, filepath, titration.mass, titration.salinity)
@@ -51,21 +52,24 @@ while choice != 6:
         input("Titration completed.  Press any key to return to the home screen.")
         
     elif choice == 2:
-        data = calk.read_csv(os.getcwd()+"\\Data\\Alkalinity_Meta.csv").calkulate()
+        """Calkulate all previous runs stored in Alkalinity_Meta.csv.
+        This could take a while, depending on how many runs there are."""
+        data = calk.read_csv(Path(os.getcwd()+"/Data/Alkalinity_Meta.csv")).calkulate()
         print(data[["file_name", "analyte_mass", "alkalinity"]])
         
     elif choice == 3:
-        print("DUMMY RESPONSES!  Instruments not yet connected.")
-        EMF = (get_mV())
+        """Acquire pH and temperature probe(s) current readings."""
+        EMF = get_mV()
         TC = get_temp()
-        Eo =  system = pd.read_csv("System_Info.csv")['probe_Eo'][0]
+        Eo =  pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]
         print("pH probe:", round((EMF),5), "mV / pH", np.round(-1*np.log10(np.exp((EMF-Eo)*96485/8.314/(TC+273.15))),3))
         print("Titration Beaker Thermistor:", round(TC,1), "°C")
         
     elif choice == 4:
+        """Output an example metadata row, indicative of the values in System_Info.csv."""
         print("This function not fully supported.")
         #Check metadata
-        Alk_meta = AlkalinityMetadata("Undetermined", 0, "Undetermined")
+        Alk_meta = AlkalinityMetadata("Undetermined", Path(os.getcwd()+"/data"), 0, "Undetermined")
         print(Alk_meta.new_meta.transpose())
         print("These options can be changed in Titration_Alkalinity_Meta.py\n ")
         

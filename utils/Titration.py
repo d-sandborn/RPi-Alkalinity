@@ -13,8 +13,8 @@ import time
 import calkulate as calk
 
 #Instruments
-from Get_MCC128 import get_mV
-from Get_DS18B20 import get_temp
+from utils.Get_MCC128 import get_mV
+from utils.Get_DS18B20 import get_temp
 
 class RunTitration:
     def __init__(self):
@@ -31,14 +31,33 @@ class RunTitration:
         self.datasheet = table
         
     def Analyze(self): #Humphreys, M. P. and Matthews, R. S. (2020). Calkulate: total alkalinity from titration data in Python. Zenodo. doi:10.5281/zenodo.2634304.
-        data = calk.read_csv("Alkalinity_Meta.csv").calkulate()
+        data = calk.read_csv("data\Alkalinity_Meta.csv").calkulate()
         return data
     
     def Titrate(self):
-        system = pd.read_csv("System_Info.csv")
+        """
+        Text-based user interface for alkalinity titration using temperature
+        and pH (EMF) probes on a Raspberry Pi-based DAQ system.  
+        A Hach digital titrator is implemented in the present design, which 
+        outputs "Digits" = mL*800.  
+        
+        Three titration phases occur:
+            1) System setup.  Instruments are inserted into reaction system and temperature should stabilize.
+            2) Titration to pH 3.6.  Acid is added until the sample pH is < 3.6.
+            3) Titration to pH 3.  Acid is added in small intervals until the sample pH is < 3.  
+    
+        Returns
+        -------
+        titrant_concentration : float
+            Obsolete.  Molinity of HCl titrant.  
+        datasheet : Pandas dataframe
+            Three columns: Digits, EMF, and Temperature C.  Digits are equal to mL*800 as a result of the Hach digital titrator design.  
+
+        """
+        system = pd.read_csv("utils\System_Info.csv")
         Eo = system['probe_Eo'][0]
         titrant_concentration = system['titrant_HCl_molinity'][0]
-        print("Starting titration.  Please ensure that pH probe and thermistor\nare submersed and stir bar is spinning.")
+        print("Starting titration.  Please ensure that pH probe and thermistor\nare submersed, temperature is stable, and stir bar is spinning.")
         input("Press any key to continue.")
         mV = get_mV()
         TC = get_temp()
@@ -58,6 +77,7 @@ class RunTitration:
         print("Stop titration.")
         mV = get_mV()
         TC = get_temp()
+        print("System accepts titrator readings in Digits = mL*800.")
         digits = float(input("Input digital titrator reading --> "))
         newrow = pd.DataFrame(
             {"Vol" : [digits/800], #digits/800 = mL titrant
