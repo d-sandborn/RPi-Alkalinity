@@ -10,6 +10,8 @@ For works using this code please cite:
 import numpy as np
 import pandas as pd
 import time
+import os
+from pathlib import Path
 import calkulate as calk
 
 #Instruments
@@ -31,7 +33,7 @@ class RunTitration:
         self.datasheet = table
         
     def Analyze(self): #Humphreys, M. P. and Matthews, R. S. (2020). Calkulate: total alkalinity from titration data in Python. Zenodo. doi:10.5281/zenodo.2634304.
-        data = calk.read_csv("data\Alkalinity_Meta.csv").calkulate()
+        data = calk.read_csv(Path(os.getcwd()+"data/Alkalinity_Meta.csv")).calkulate()
         return data
     
     def Titrate(self):
@@ -54,7 +56,7 @@ class RunTitration:
             Three columns: Digits, EMF, and Temperature C.  Digits are equal to mL*800 as a result of the Hach digital titrator design.  
 
         """
-        system = pd.read_csv("utils\System_Info.csv")
+        system = pd.read_csv(Path(os.getcwd()+"utils/System_Info.csv"))
         Eo = system['probe_Eo'][0]
         titrant_concentration = system['titrant_HCl_molinity'][0]
         print("Starting titration.  Please ensure that pH probe and thermistor\nare submersed, temperature is stable, and stir bar is spinning.")
