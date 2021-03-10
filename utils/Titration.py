@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb  8 09:52:45 2021
-
-@author: Daniel Sandborn
+RPi Alkalinity
+Version: v0.2 (Pre-alpha)
+Licensed under {License info} for general use with attribution.
+For works using this code please cite:
+    Sandborn, D.E., Minor E.C., Hill, C. (2021)
 """
 
 import numpy as np
@@ -10,15 +12,13 @@ import pandas as pd
 import time
 import calkulate as calk
 
-def get_mV():
-    return (np.random.rand()-0.5)/10+0.2
-
-def get_temp():
-    return (np.random.rand()-0.5)+20
+#Instruments
+from Get_MCC128 import get_mV
+from Get_DS18B20 import get_temp
 
 class RunTitration:
     def __init__(self):
-        mass = int(input("Sample mass (g)? --> "))
+        mass = float(input("Sample mass (g)? --> "))
         self.mass = mass
         SampleID = input("Sample ID? --> ")
         self.SampleID = SampleID
@@ -35,23 +35,26 @@ class RunTitration:
         return data
     
     def Titrate(self):
+        system = pd.read_csv("System_Info.csv")
+        Eo = system['probe_Eo'][0]
+        titrant_concentration = system['titrant_HCl_molinity'][0]
         print("Starting titration.  Please ensure that pH probe and thermistor\nare submersed and stir bar is spinning.")
         input("Press any key to continue.")
         mV = get_mV()
         TC = get_temp()
-        datasheet = pd.DataFrame(
-            {"Vol" : [0],
-             "mV" : [mV],
-             "TC" : [TC]})
+        datasheet = pd.DataFrame( #needs 2-row buffer for Calkulate: one row of column labels, another of 0s
+            {"Vol" : [0, 0],
+             "mV" : [0, mV],
+             "TC" : [0, TC]})
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
-        print("Approx. Initial pH: ", -1*np.log10(np.exp((mV-0.394401)*96485/8.314/(TC+273.15))))
-        print("Add acid with digital titrator until pH is less than 3.8.")
-        while mV < 0.17: #~ pH 3.8; [H+] = exp((E-0.394401)*F/R/T)
-            time.sleep(3)
+        print("Approx. Initial pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3))
+        print("Add acid with digital titrator until pH is less than 3.6.")
+        while mV < (np.log(10**-3.6)*8.314*298.15/96485+Eo): #~ pH 3.6, neglecting temperature
+            time.sleep(3) #wait 3 seconds for homogenization
             mV = get_mV()
             TC = get_temp()
-            print("Present pH: ", -1*np.log10(np.exp((mV-0.394401)*96485/8.314/(TC+273.15))))
+            print("Present pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3))
         print("Stop titration.")
         mV = get_mV()
         TC = get_temp()
@@ -77,6 +80,6 @@ class RunTitration:
                  "mV" : [mV],
                  "TC" : [TC]})
             datasheet.append(newrow)
-            print("Present pH: ", -1*np.log10(np.exp((mV-0.394401)*96485/8.314/(273.15+TC))))
+            print("Present pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(273.15+TC))),3))
         print("Titration Completed.")    
-        return datasheet
+        return titrant_concentration, datasheet

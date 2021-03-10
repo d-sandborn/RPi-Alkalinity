@@ -1,0 +1,2 @@
+analysis_batch,file_name,file_path,salinity,analyte_mass,date,file_good,opt_total_borate,opt_k_carbonic,opt_k_fluoride,opt_k_bisulfate,measurement_type,molinity_HCl,molinity_NaCl,titrant_molinity,alkalinity_certified,dic,total_borate,total_fluoride,total_sulfate
+1,testing.csv,C:\Users\Daniel Sandborn\Google Drive\GitStuff\RPi-Alkalinity\Data\,35,0.1,2/25/2021,TRUE,2,8,2,1,EMF,0.1,0,0.1,,,,,
