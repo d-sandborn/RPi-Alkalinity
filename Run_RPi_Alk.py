@@ -43,7 +43,7 @@ while choice != 6:
         #File Export
         filename = titration.SampleID+".csv"
         filepath = Path(os.getcwd()+"/data")
-        datasheet.to_csv(filename, index = False)
+        datasheet.to_csv(filepath/filename, index = False)
         print(".csv titration file created.")
         Alk_meta = AlkalinityMetadata(filename, filepath, titration.mass, titration.salinity)
         Alk_meta.Metadata_Export()
@@ -54,7 +54,8 @@ while choice != 6:
     elif choice == 2:
         """Calkulate all previous runs stored in Alkalinity_Meta.csv.
         This could take a while, depending on how many runs there are."""
-        data = calk.read_csv(Path(os.getcwd()+"/Data/Alkalinity_Meta.csv")).calkulate()
+        data = calk.read_csv(Path(os.getcwd()+"/Data/Alkalinity_Meta.csv"))
+        data.solve()
         print(data[["file_name", "analyte_mass", "alkalinity"]])
         
     elif choice == 3:

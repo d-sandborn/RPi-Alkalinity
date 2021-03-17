@@ -33,7 +33,8 @@ class RunTitration:
         self.datasheet = table
         
     def Analyze(self): #Humphreys, M. P. and Matthews, R. S. (2020). Calkulate: total alkalinity from titration data in Python. Zenodo. doi:10.5281/zenodo.2634304.
-        data = calk.read_csv(Path(os.getcwd()+"/data/Alkalinity_Meta.csv")).calkulate()
+        data = calk.read_csv(Path(os.getcwd()+"/data/Alkalinity_Meta.csv"))
+        data.solve()
         return data
     
     def Titrate(self):
