@@ -13,6 +13,7 @@ import time
 import os
 from pathlib import Path
 import calkulate as calk
+import sys
 
 #Instruments
 from utils.Get_MCC128 import get_mV
@@ -71,12 +72,12 @@ class RunTitration:
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
         print("Approx. Initial pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3))
-        print("Add acid with digital titrator until pH is less than 3.6.")
-        while mV < (np.log(10**-3.6)*8.314*298.15/96485+Eo): #~ pH 3.6, neglecting temperature
-            time.sleep(3) #wait 3 seconds for homogenization
+        print("Add acid with digital titrator until pH is less than 3.8.")
+        while mV < (np.log(10**-3.8)*8.314*298.15/96485+Eo): #~ pH 3.6, neglecting temperature
+            time.sleep(1) #wait 1 second for homogenization
             mV = get_mV()
             TC = get_temp()
-            print("Present pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3))
+            sys.stdout.write('\r'+"Present pH: "+ float(np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3)))
         print("Stop titration.")
         mV = get_mV()
         TC = get_temp()
@@ -93,7 +94,7 @@ class RunTitration:
         #time.sleep(60)
         print("Resume titration.  Add ~25 digits at a time until pH = 3.00.")
         print("If an error is made, continue with the titration.\nCorrections can be made manually to the .csv file.")
-        while mV < 0.217:
+        while mV < (np.log(10**-3)*8.314*298.15/96485+Eo):
             digits = float(input("Titrator reading --> "))
             time.sleep(3)
             mV = get_mV()
