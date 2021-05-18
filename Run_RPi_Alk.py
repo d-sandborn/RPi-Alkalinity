@@ -54,7 +54,7 @@ while choice != 6:
     elif choice == 2:
         """Calkulate all previous runs stored in Alkalinity_Meta.csv.
         This could take a while, depending on how many runs there are."""
-        data = calk.read_csv(Path(os.getcwd()+"/Data/Alkalinity_Meta.csv"))
+        data = calk.read_csv(Path(os.getcwd()+"/data/Alkalinity_Meta.csv"))
         data.solve()
         print(data[["file_name", "analyte_mass", "alkalinity"]])
         

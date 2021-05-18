@@ -19,6 +19,7 @@ This file contains code that is largely the work of Measurement Computing Corpor
 #Basics
 from time import sleep
 from sys import stdout
+import numpy as np
 from daqhats import mcc128, OptionFlags, HatIDs, HatError, AnalogInputMode, \
     AnalogInputRange
 from utils.daqhats_utils import select_hat_device, enum_mask_to_string, \
@@ -28,9 +29,18 @@ from utils.daqhats_utils import select_hat_device, enum_mask_to_string, \
 CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
-def get_mV():
+def get_mV(filtering = None, boxcarnum = 8):
     """
-    
+    Inputs
+    ------
+    Optional: filtering, string
+        Enables software signal filtering of electrode signal.  
+        Accepted values: "boxcar"
+        Default value: "boxcar"
+        
+    Optional: boxcarnum, int
+        Sets boxcar filtering width.
+        Default value: 8
 
     Raises
     ------
@@ -83,6 +93,16 @@ def get_mV():
 
     except (HatError, ValueError) as error:
         print('\n', error)
+        
+        
+        #boxcar filtering option
+        if filtering == "boxcar":
+            value_set = np.empty([boxcarnum])
+            for i in range(boxcarnum):
+                value = hat.a_in_read(low_chan, options)
+                stdout.flush()
+                value_set[i] = value
+            value = value_set.mean()
         
     return value
         
