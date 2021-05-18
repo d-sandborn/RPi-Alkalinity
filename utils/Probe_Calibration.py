@@ -57,9 +57,9 @@ class ProbeCalibration:
          TC = get_temp()
          new_Eo = model.intercept_[0]/-96485*8.314*(TC + 273.15)
          new_date = date.today()
-         system = pd.read_csv(Path(os.getcwd()+"utils/System_Info.csv"))
+         system = pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))
          system.loc[0, 'probe_Eo'] = new_Eo
          system.loc[0, 'probe_last_calibrated'] = new_date
-         system.to_csv(Path(os.getcwd()+"utils/System_Info.csv"), mode='w', index = False)
+         system.to_csv(Path(os.getcwd()+"/utils/System_Info.csv"), mode='w', index = False)
          print("System_Info.csv updated.  Probe calibration completed.  ")
          

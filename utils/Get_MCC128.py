@@ -29,7 +29,7 @@ from utils.daqhats_utils import select_hat_device, enum_mask_to_string, \
 CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
-def get_mV(filtering = None, boxcarnum = 8):
+def get_mV(filtering = 'boxcar', boxcarnum = 132): #132 samples takes ~1 s.
     """
     Inputs
     ------
