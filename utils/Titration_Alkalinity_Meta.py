@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.2 (Pre-alpha)
+Version: v0.3 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -25,6 +25,7 @@ class AlkalinityMetadata:
         self.opt_k_carbonic = system['opt_k_carbonic'][0]
         self.opt_k_fluoride = system['opt_k_fluoride'][0]
         self.opt_k_bisulfate = system['opt_k_bisulfate'][0]
+        self.dic = system['dic'][0]
         self.new_meta = pd.DataFrame( #See https://calkulate.readthedocs.io/en/latest/metadata/
             {"analysis_batch" : [np.nan],
              "file_name" : [self.filename],
@@ -42,7 +43,7 @@ class AlkalinityMetadata:
              "molinity_NaCl" : [0],
              "titrant_molinity" : [self.molinity],
              "alkalinity_certified" : [np.nan],
-             "dic" : [np.nan],
+             "dic" : [self.dic],
              "total_borate" : [np.nan],
              "total_fluoride" : [np.nan],
              "total_sulfate" : [np.nan]})

@@ -47,8 +47,8 @@ class ProbeCalibration:
          Y = np.array([])
          for i in range(num_buffers):
              pH = float(input("What is the pH of the buffer? -->"))
-             print("Wait > 4 minutes for measurement stabilization.")
-             time.sleep(60*4) #Disabled for development.
+             print("Wait > 3 minutes for measurement stabilization.")
+             time.sleep(60*3) #Disabled for development.
              EMF = get_mV()
              X = np.append(X,EMF)
              Y = np.append(Y,np.log(10**-pH))

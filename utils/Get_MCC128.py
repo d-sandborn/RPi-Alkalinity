@@ -1,6 +1,6 @@
 """
 RPi Alkalinity
-Version: v0.2 (Pre-alpha)
+Version: v0.3 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
 
 This file contains code that is largely the work of Measurement Computing Corporation.
@@ -29,7 +29,7 @@ from utils.daqhats_utils import select_hat_device, enum_mask_to_string, \
 CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
-def get_mV(filtering = 'boxcar', boxcarnum = 132): #132 samples takes ~1 s.
+def get_mV(filtering = 'boxcar', boxcarnum = 300):
     """
     Inputs
     ------
@@ -39,8 +39,8 @@ def get_mV(filtering = 'boxcar', boxcarnum = 132): #132 samples takes ~1 s.
         Default value: "boxcar"
         
     Optional: boxcarnum, int
-        Sets boxcar filtering width.
-        Default value: 8
+        Sets boxcar filtering width, in approximately centiseconds.
+        Default value: 300
 
     Raises
     ------
@@ -95,16 +95,17 @@ def get_mV(filtering = 'boxcar', boxcarnum = 132): #132 samples takes ~1 s.
         print('\n', error)
         
         
-        #boxcar filtering option
-        if filtering == "boxcar":
-            value_set = np.empty([boxcarnum])
-            for i in range(boxcarnum):
-                value = hat.a_in_read(low_chan, options)
-                stdout.flush()
-                value_set[i] = value
-            value = value_set.mean()
+    #boxcar filtering option
+    if filtering == 'boxcar':
+        value_set = np.empty([boxcarnum])
+        for i in range(boxcarnum):
+            reading = hat.a_in_read(low_chan, options)
+            stdout.flush()
+            value_set[i] = reading
+            sleep(0.01) #100 Hz; higher sampling rates introduce noise
+        value = value_set.mean()
         
-    return value
+    return value*1000 #mV not V
         
 def hat_test():
     """

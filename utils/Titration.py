@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.2 (Pre-alpha)
+Version: v0.3 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -18,14 +18,16 @@ import sys
 #Instruments
 from utils.Get_MCC128 import get_mV
 from utils.Get_DS18B20 import get_temp
+from utils.manual_input import mass_input, salinity_input, digit_input
+from utils.plotting import gran_plot
 
 class RunTitration:
     def __init__(self):
-        mass = float(input("Sample mass (g)? --> "))
+        mass = mass_input()
         self.mass = mass
         SampleID = input("Sample ID? --> ")
         self.SampleID = SampleID
-        salinity = float(input("Sample Salinity (psu/S)? --> "))
+        salinity = salinity_input()
         self.salinity = salinity
         table = pd.DataFrame(
             {"Vol" : [],
@@ -71,39 +73,40 @@ class RunTitration:
              "TC" : [0, TC]})
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
-        print("Approx. Initial pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3))
+        print("Approx. Initial pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.3144621/(TC+273.15))),3))
         print("Add acid with digital titrator until pH is less than 3.8.")
-        while mV < (np.log(10**-3.8)*8.314*298.15/96485+Eo): #~ pH 3.6, neglecting temperature
-            time.sleep(1) #wait 1 second for homogenization
-            mV = get_mV()
+        while mV < (np.log(10**-3.8)*8.3144621*298.15/96485+Eo): #~ pH 3.6, neglecting temperature
+            time.sleep(1) 
+            mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
-            sys.stdout.write('\r'+"Present pH: "+ float(np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3)))
+            sys.stdout.write('\r'+"Present pH: "+ str(np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3)))
         print("Stop titration.")
         mV = get_mV()
         TC = get_temp()
         print("System accepts titrator readings in Digits = mL*800.")
-        digits = float(input("Input digital titrator reading --> "))
+        digits = digit_input()
         newrow = pd.DataFrame(
             {"Vol" : [digits/800], #digits/800 = mL titrant
              "mV" : [mV],
              "TC" : [TC]})
-        datasheet.append(newrow)
+        datasheet = datasheet.append(newrow)
         print("Continue stirring for 6 minutes for degassing.")
         #time.sleep(60*5)
         print("One minute left until resuming titration.")
         #time.sleep(60)
         print("Resume titration.  Add ~25 digits at a time until pH = 3.00.")
         print("If an error is made, continue with the titration.\nCorrections can be made manually to the .csv file.")
-        while mV < (np.log(10**-3)*8.314*298.15/96485+Eo):
-            digits = float(input("Titrator reading --> "))
-            time.sleep(3)
+        while mV < (np.log(10**-3)*8.3144621*298.15/96485+Eo):
+            digits = digit_input()
+            time.sleep(4)
             mV = get_mV()
             TC = get_temp()
             newrow = pd.DataFrame(
                 {"Vol" : [digits/800], #digits/800 = mL titrant
                  "mV" : [mV],
                  "TC" : [TC]})
-            datasheet.append(newrow)
-            print("Present pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(273.15+TC))),3))
+            datasheet = datasheet.append(newrow)
+            gran_plot(datasheet, self.mass, str(np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.314/(TC+273.15))),3)))
+            print("Present pH: ", np.round(-1*np.log10(np.exp((mV-Eo)*96485/8.3144621/(273.15+TC))),3))
         print("Titration Completed.")    
         return titrant_concentration, datasheet

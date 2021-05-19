@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.2 (Pre-alpha)
+Version: v0.3 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -20,6 +20,7 @@ from pathlib import Path
 from utils.Titration import RunTitration
 from utils.Titration_Alkalinity_Meta import AlkalinityMetadata
 from utils.Probe_Calibration import ProbeCalibration
+from utils.admin import say_hello, chess
 
 #Instruments
 from utils.Get_MCC128 import get_mV
@@ -29,23 +30,26 @@ from utils.Get_DS18B20 import get_temp
 header = "Alkalinity titration with RPi_Alkalinity system on "+str(date.today())
 
 #Initialize UI
-print("Welcome to RPi_Alkalinity.\nPre-Alpha Build v0.2")
-print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) Quit")
+print("Welcome to RPi_Alkalinity.\nPre-Alpha Build v0.3")
+print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Quit")
 
 choice = 0
 
-while choice != 6:
-    choice = int(input("--> "))
+while choice != 7:
+    try: 
+        choice = int(input("--> "))
+    except ValueError:
+        print("You have not entered a valid input.")
     if choice == 1:
         """Initialize and conduct titration"""
         titration = RunTitration()
         titrant_molinity, datasheet = titration.Titrate()
         
         #File Export
-        filename = titration.SampleID+".csv"
-        filepath = Path(os.getcwd()+"/data")
-        datasheet.to_csv(filepath/filename, index = False)
-        print(".csv titration file created.")
+        filename = titration.SampleID+".txt"
+        filepath = Path(os.getcwd()+"/data/")
+        datasheet.to_csv(filepath/filename, index = False, sep = '\t')
+        print(".txt titration file created.")
         Alk_meta = AlkalinityMetadata(filename, filepath, titration.mass, titration.salinity)
         Alk_meta.Metadata_Export()
         results = titration.Analyze()
@@ -81,7 +85,14 @@ while choice != 6:
         calib.calibrate()
         
     elif choice == 6:
+        say_hello()
+        
+    elif choice == 7:
         break
+    
+    elif "games" in choice:
+        chess()
+        
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) Quit")
+    print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Quit")
 
