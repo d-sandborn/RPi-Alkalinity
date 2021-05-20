@@ -21,6 +21,14 @@ from utils.Get_DS18B20 import get_temp
 from utils.manual_input import mass_input, salinity_input, digit_input
 from utils.plotting import gran_plot
 
+def mV_to_pH(mV, Eo, TC = 25.0):
+    pH = -1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(TC+273.15)))
+    return pH
+
+def pH_to_mV(pH, Eo, TC = 25.0):
+    mV = (np.log(10**-pH)*8.3144621*298.15/96485+Eo)*1000
+    return mV
+
 class RunTitration:
     def __init__(self):
         mass = mass_input()
@@ -73,9 +81,9 @@ class RunTitration:
              "TC" : [0, TC]})
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
-        print("Approx. Initial pH: ", np.round(-1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(TC+273.15))),3))
+        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
         print("Add acid with digital titrator until pH is less than 3.8.")
-        while mV < (1000*np.log(10**-3.8)*8.3144621*298.15/96485+Eo): #~ pH 3.6, neglecting temperature
+        while mV < pH_to_mV(3.8, Eo, TC): 
             time.sleep(1) 
             mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
@@ -91,12 +99,12 @@ class RunTitration:
              "TC" : [TC]})
         datasheet = datasheet.append(newrow)
         print("Continue stirring for 6 minutes for degassing.")
-        #time.sleep(60*5)
+        #time.sleep(60*5) #disabled for dev
         print("One minute left until resuming titration.")
-        #time.sleep(60)
+        #time.sleep(60) #disabled for dev
         print("Resume titration.  Add ~25 digits at a time until pH = 3.00.")
         print("If an error is made, continue with the titration.\nCorrections can be made manually to the .csv file.")
-        while mV < (1000*np.log(10**-3)*8.3144621*298.15/96485+Eo):
+        while mV < pH_to_mV(3, Eo, TC):
             digits = digit_input()
             time.sleep(4)
             mV = get_mV()
@@ -106,7 +114,10 @@ class RunTitration:
                  "mV" : [mV],
                  "TC" : [TC]})
             datasheet = datasheet.append(newrow)
-            gran_plot(datasheet, self.mass, str(np.round(-1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(TC+273.15))),3)))
-            print("Present pH: ", np.round(-1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(273.15+TC))),3))
+            try:
+                gran_plot(datasheet, self.mass, Eo)
+            except:
+                print("Plotting is presently kaput.")
+            print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
         print("Titration Completed.")    
         return titrant_concentration, datasheet

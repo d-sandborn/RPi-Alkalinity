@@ -17,7 +17,7 @@ from datetime import date
 from pathlib import Path
 
 #Utilities
-from utils.Titration import RunTitration
+from utils.Titration import RunTitration, mV_to_pH
 from utils.Titration_Alkalinity_Meta import AlkalinityMetadata
 from utils.Probe_Calibration import ProbeCalibration
 from utils.admin import say_hello, chess
@@ -68,7 +68,7 @@ while choice != 7:
         EMF = get_mV()
         TC = get_temp()
         Eo =  pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]
-        print("pH probe:", round((EMF),5), "mV / pH", np.round(-1*np.log10(np.exp((EMF-Eo)*96485/8.314/(TC+273.15))),3))
+        print("pH probe:", round((EMF),5), "mV / pH", np.round(mV_to_pH(EMF, Eo, TC),3))
         print("Titration Beaker Thermistor:", round(TC,1), "°C")
         
     elif choice == 4:

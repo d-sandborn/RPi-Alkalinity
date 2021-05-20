@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.2 (Pre-alpha)
+Version: v0.3 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -48,14 +48,14 @@ class ProbeCalibration:
          for i in range(num_buffers):
              pH = float(input("What is the pH of the buffer? -->"))
              print("Wait > 3 minutes for measurement stabilization.")
-             time.sleep(60*3) #Disabled for development.
+             time.sleep(60*3)
              EMF = get_mV()
              X = np.append(X,EMF)
              Y = np.append(Y,np.log(10**-pH))
              print("Proceed to next buffer.")
          model = LinearRegression().fit(X.reshape(-1, 1),Y.reshape(-1, 1))
          TC = get_temp()
-         new_Eo = model.intercept_[0]/-96485*8.314*(TC + 273.15)
+         new_Eo = model.intercept_[0]/-96485*8.3144626*(TC + 273.15)
          new_date = date.today()
          system = pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))
          system.loc[0, 'probe_Eo'] = new_Eo
