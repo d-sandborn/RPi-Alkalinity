@@ -17,7 +17,7 @@ class AlkalinityMetadata:
     def __init__(self, filename, filepath, mass, salinity):
         system = pd.read_csv(Path("utils/System_Info.csv"))
         self.filename = filename
-        self.filepath = filepath #ends in /data
+        self.filepath = str(filepath)+str(Path('/'))
         self.mass = mass/1000 #convert to kg for Calkulate
         self.salinity = salinity
         self.molinity = system['titrant_HCl_molinity'][0]

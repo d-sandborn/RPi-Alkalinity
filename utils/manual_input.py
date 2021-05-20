@@ -21,7 +21,7 @@ def mass_input():
     mass = 0
     while mass == 0:
         try:
-            mass = float(input("Sample Mass (kg) --> "))
+            mass = float(input("Sample Mass (g) --> "))
         except ValueError:
             mass = 0
             print("This is not a valid mass.  Please input an integer or float.")

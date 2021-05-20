@@ -90,7 +90,7 @@ while choice != 7:
     elif choice == 7:
         break
     
-    elif "games" in choice:
+    elif choice == 32:
         chess()
         
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
