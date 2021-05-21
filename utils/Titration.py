@@ -81,13 +81,13 @@ class RunTitration:
              "TC" : [0, TC]})
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
-        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
+        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Add acid with digital titrator until pH is less than 3.8.")
         while mV < pH_to_mV(3.8, Eo, TC): 
             time.sleep(1) 
             mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
-            sys.stdout.write('\r'+"Present pH: "+ str(np.round(-1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(TC+273.15))),3)))
+            sys.stdout.write('\r'+"Present pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3)))
         print("\nStop titration.")
         mV = get_mV()
         TC = get_temp()
@@ -118,6 +118,6 @@ class RunTitration:
                 gran_plot(datasheet, self.mass, Eo)
             except:
                 print("Plotting is presently kaput.")
-            print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
+            print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Titration Completed.")    
         return titrant_concentration, datasheet
