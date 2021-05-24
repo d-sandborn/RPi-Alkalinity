@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.2 (Pre-alpha)
+Version: v0.3 (Pre-alpha)
 
 This file contains helper functions for the MCC DAQ HAT Python examples.
-This code is largely the work of Measurement Computing Corporation.
+This code is entirely the work of Measurement Computing Corporation.
 
 """
 from __future__ import print_function

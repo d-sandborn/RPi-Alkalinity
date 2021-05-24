@@ -53,7 +53,7 @@ while choice != 7:
         Alk_meta = AlkalinityMetadata(filename, filepath, titration.mass, titration.salinity)
         Alk_meta.Metadata_Export()
         results = titration.Analyze()
-        print("TA: ", results['alkalinity'], " μmol/kg")
+        print("TA: ", results[["file_name", "analyte_mass", "alkalinity"]], " μmol/kg")
         input("Titration completed.  Press any key to return to the home screen.")
         
     elif choice == 2:

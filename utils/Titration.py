@@ -82,9 +82,9 @@ class RunTitration:
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
         print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
-        print("Add acid with digital titrator until pH is less than 3.8.")
-        while mV < pH_to_mV(3.8, Eo, TC): 
-            time.sleep(1) 
+        print("Add acid with digital titrator until pH is less than 3.7.")
+        while mV < pH_to_mV(3.7, Eo, TC): 
+            #time.sleep(1) 
             mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
             sys.stdout.write('\r'+"Present pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3)))
