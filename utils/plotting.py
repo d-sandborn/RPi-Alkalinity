@@ -9,6 +9,7 @@ For works using this code please cite:
 import plotnine as p9
 import pandas as pd
 from utils.conversions import mV_to_pH, pH_to_mV
+import matplotlib.pyplot as plt
 
 def gran_plot(datasheet, mass, Eo):
     datasheet = datasheet.drop([0]) #drop first filler row
@@ -19,3 +20,4 @@ def gran_plot(datasheet, mass, Eo):
           +p9.labs(y = 'Gran Function', x = 'Acid Added (mL)', title = 'Gran Plot')
           +p9.theme_classic())
     p1.draw()
+    plt.pause(0.0001)
