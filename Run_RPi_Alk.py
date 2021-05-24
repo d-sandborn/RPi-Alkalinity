@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.3 (Pre-alpha)
+Version: v0.4 (Beta)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)

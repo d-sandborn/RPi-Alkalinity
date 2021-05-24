@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon May 24 10:29:11 2021
-
-@author: sandb425
+RPi Alkalinity
+Version: v0.4 (Beta)
+Licensed under {License info} for general use with attribution.
+For works using this code please cite:
+    Sandborn, D.E., Minor E.C., Hill, C. (2021)
 """
 import numpy as np
 

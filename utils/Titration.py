@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.3 (Pre-alpha)
+Version: v0.4 (Beta)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -114,10 +114,10 @@ class RunTitration:
                  "mV" : [mV],
                  "TC" : [TC]})
             datasheet = datasheet.append(newrow)
-            try:
-                gran_plot(datasheet, self.mass, Eo)
-            except:
-                print("Plotting is presently kaput.")
+            #try:
+                #gran_plot(datasheet, self.mass, Eo) #plotting poorly supported on RPi.  Wait until Spyder 4.
+            #except:
+                #print("Plotting is presently kaput.")
             print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Titration Completed.")    
         return titrant_concentration, datasheet
