@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.4 (Beta)
+Version: v0.3 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -76,34 +76,35 @@ class RunTitration:
         mV = get_mV()
         TC = get_temp()
         datasheet = pd.DataFrame( #needs 2-row buffer for Calkulate: one row of column labels, another of 0s
-            {"Vol" : [0, 0],
-             "mV" : [0, mV],
-             "TC" : [0, TC]})
+            {"Vol" : [0],
+             "mV" : [0],
+             "TC" : [0]})
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
-        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
-        print("Add acid with digital titrator until pH is less than 3.7.")
-        while mV < pH_to_mV(3.7, Eo, TC): 
-            #time.sleep(1) 
+        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
+        print("Add acid with digital titrator until pH is less than 3.8.")
+        while mV < pH_to_mV(3.8, Eo, TC): 
+            time.sleep(0.5) 
             mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
-            sys.stdout.write('\r'+"Present pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3)))
+            sys.stdout.write('\r'+"Present pH: "+ str(np.round(-1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(TC+273.15))),3)))
         print("\nStop titration.")
+        print("System accepts titrator readings in Digits = mL*800.")
+        digits = digit_input()        
+        print("Continue stirring for 6 minutes for degassing.")
+        time.sleep(60*5) 
+        print("One minute left until resuming titration.")
+        time.sleep(60) 
+        input("Degassing completed.  Press any key to continue. -->")
         mV = get_mV()
         TC = get_temp()
-        print("System accepts titrator readings in Digits = mL*800.")
-        digits = digit_input()
         newrow = pd.DataFrame(
             {"Vol" : [digits/800], #digits/800 = mL titrant
              "mV" : [mV],
              "TC" : [TC]})
         datasheet = datasheet.append(newrow)
-        print("Continue stirring for 6 minutes for degassing.")
-        #time.sleep(60*5) #disabled for dev
-        print("One minute left until resuming titration.")
-        #time.sleep(60) #disabled for dev
-        print("Resume titration.  Add ~25 digits at a time until pH = 3.00.")
-        print("If an error is made, continue with the titration.\nCorrections can be made manually to the .csv file.")
+        print("Resume titration.  Add ~20 digits at a time until pH = 3.")
+        print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file.")
         while mV < pH_to_mV(3, Eo, TC):
             digits = digit_input()
             time.sleep(4)
@@ -114,10 +115,10 @@ class RunTitration:
                  "mV" : [mV],
                  "TC" : [TC]})
             datasheet = datasheet.append(newrow)
-            #try:
-                #gran_plot(datasheet, self.mass, Eo) #plotting poorly supported on RPi.  Wait until Spyder 4.
-            #except:
-                #print("Plotting is presently kaput.")
-            print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
-        print("Titration Completed.")    
+            print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
+        print("Titration Completed.")
+        try:
+            print(gran_plot(datasheet, self.mass, Eo))
+        except:
+            print("Plotting is presently kaput.")
         return titrant_concentration, datasheet
