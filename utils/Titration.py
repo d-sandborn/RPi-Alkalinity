@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import calkulate as calk
 import sys
+import matplotlib.pyplot as plt
 
 #Instruments
 from utils.Get_MCC128 import get_mV
@@ -57,7 +58,7 @@ class RunTitration:
         
         Three titration phases occur:
             1) System setup.  Instruments are inserted into reaction system and temperature should stabilize.
-            2) Titration to pH 3.6.  Acid is added until the sample pH is < 3.6.
+            2) Titration to pH 3.8.  Acid is added until the sample pH is < 3.6.
             3) Titration to pH 3.  Acid is added in small intervals until the sample pH is < 3.  
     
         Returns
@@ -81,13 +82,13 @@ class RunTitration:
              "TC" : [0]})
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
-        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
+        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Add acid with digital titrator until pH is less than 3.8.")
         while mV < pH_to_mV(3.8, Eo, TC): 
             time.sleep(0.5) 
             mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
-            sys.stdout.write('\r'+"Present pH: "+ str(np.round(-1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(TC+273.15))),3)))
+            sys.stdout.write('\r'+"Present pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3)))
         print("\nStop titration.")
         print("System accepts titrator readings in Digits = mL*800.")
         digits = digit_input()        
@@ -115,10 +116,11 @@ class RunTitration:
                  "mV" : [mV],
                  "TC" : [TC]})
             datasheet = datasheet.append(newrow)
-            print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC)),3)
+            print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Titration Completed.")
         try:
-            print(gran_plot(datasheet, self.mass, Eo))
+            gran_plot(datasheet, self.mass, Eo).draw()
+            plt.pause(0.0001)
         except:
             print("Plotting is presently kaput.")
         return titrant_concentration, datasheet

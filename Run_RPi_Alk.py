@@ -17,7 +17,8 @@ from datetime import date
 from pathlib import Path
 
 #Utilities
-from utils.Titration import RunTitration, mV_to_pH
+from utils.Titration import RunTitration
+from utils.conversions import mV_to_pH, pH_to_mV
 from utils.Titration_Alkalinity_Meta import AlkalinityMetadata
 from utils.Probe_Calibration import ProbeCalibration
 from utils.admin import say_hello, chess
@@ -30,7 +31,7 @@ from utils.Get_DS18B20 import get_temp
 header = "Alkalinity titration with RPi_Alkalinity system on "+str(date.today())
 
 #Initialize UI
-print("Welcome to RPi_Alkalinity.\nPre-Alpha Build v0.3")
+print("Welcome to RPi_Alkalinity.\nBeta Build 0.4")
 print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Quit")
 
 choice = 0
