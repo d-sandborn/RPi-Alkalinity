@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.4 (Beta)
+Version: v0.5 (Beta)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -12,16 +12,17 @@ import numpy as np
 import pandas as pd
 import calkulate as calk
 import os
-import sys
 from datetime import date
 from pathlib import Path
 
 #Utilities
 from utils.Titration import RunTitration
-from utils.conversions import mV_to_pH, pH_to_mV
+from utils.conversions import mV_to_pH
 from utils.Titration_Alkalinity_Meta import AlkalinityMetadata
 from utils.Probe_Calibration import ProbeCalibration
 from utils.admin import say_hello, chess
+from utils.plotting import gran_plot, residual_plot
+from utils.manual_input import filename_input, mass_input, Eo_input
 
 #Instruments
 from utils.Get_MCC128 import get_mV
@@ -32,11 +33,11 @@ header = "Alkalinity titration with RPi_Alkalinity system on "+str(date.today())
 
 #Initialize UI
 print("Welcome to RPi_Alkalinity.\nBeta Build 0.4")
-print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Quit")
+print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations.\n8) Quit")
 
 choice = 0
 
-while choice != 7:
+while choice != 8:
     try: 
         choice = int(input("--> "))
     except ValueError:
@@ -54,6 +55,11 @@ while choice != 7:
         Alk_meta = AlkalinityMetadata(filename, filepath, titration.mass, titration.salinity)
         Alk_meta.Metadata_Export()
         results = titration.Analyze()
+        try:
+            print(gran_plot(pd.read_csv(filepath/filename, sep = '\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
+            print(residual_plot(pd.read_csv(filepath/filename, sep = '\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
+        except:
+            print("Plotting is presently kaput.")
         print("TA: \n", results[["file_name", "analyte_mass", "alkalinity"]], "\nμmol/kg")
         input("Titration completed.  Press any key to return to the home screen.")
         
@@ -89,11 +95,23 @@ while choice != 7:
         say_hello()
         
     elif choice == 7:
+        filename = filename_input()
+        filepath = Path(os.getcwd()+"/data/")
+        mass = mass_input()
+        Eo = Eo_input()
+        try:
+            print(gran_plot(pd.read_csv(filepath/filename, sep = '\t'), mass, Eo))
+            print(residual_plot(pd.read_csv(filepath/filename, sep = '\t'), mass, Eo))
+        except:
+            print("Plotting is presently kaput.")
+    
+    elif choice == 8:
         break
     
     elif choice == 32:
         chess()
         
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Quit")
+    print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations.\n8) Quit")
+
 

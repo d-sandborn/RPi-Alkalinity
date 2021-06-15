@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.3 (Pre-alpha)
+Version: v0.5 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -20,14 +20,13 @@ import matplotlib.pyplot as plt
 from utils.Get_MCC128 import get_mV
 from utils.Get_DS18B20 import get_temp
 from utils.manual_input import mass_input, salinity_input, digit_input
-from utils.plotting import gran_plot
 
 def mV_to_pH(mV, Eo, TC = 25.0):
-    pH = -1*np.log10(np.exp((mV/1000-Eo)*96485/8.3144621/(TC+273.15)))
+    pH = -1*np.log10(np.exp((mV/1000-Eo)*96485.33212/8.3144621/(TC+273.15)))
     return pH
 
 def pH_to_mV(pH, Eo, TC = 25.0):
-    mV = (np.log(10**-pH)*8.3144621*298.15/96485+Eo)*1000
+    mV = (np.log(10**-pH)*8.3144621*298.15/96485.33212+Eo)*1000
     return mV
 
 class RunTitration:
@@ -64,16 +63,16 @@ class RunTitration:
         Returns
         -------
         titrant_concentration : float
-            Obsolete.  Molinity of HCl titrant.  
+            Molinity of HCl titrant.  
         datasheet : Pandas dataframe
-            Three columns: Digits, EMF, and Temperature C.  Digits are equal to mL*800 as a result of the Hach digital titrator design.  
+            Three columns: Vol, mV, and TC.
 
         """
         system = pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))
         Eo = system['probe_Eo'][0]
         titrant_concentration = system['titrant_HCl_molinity'][0]
-        print("Starting titration.  Please ensure that pH probe and thermistor\nare submersed, temperature is stable, and stir bar is spinning.")
-        input("Press any key to continue.")
+        print("Please ensure that pH probe and thermistor\nare submersed, temperature is stable, and stir bar is spinning at max speed.")
+        input("Press Enter to continue.")
         mV = get_mV()
         TC = get_temp()
         datasheet = pd.DataFrame( #needs 2-row buffer for Calkulate: one row of column labels, another of 0s
@@ -85,7 +84,7 @@ class RunTitration:
         print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Add acid with digital titrator until pH is less than 3.8.")
         while mV < pH_to_mV(3.8, Eo, TC): 
-            time.sleep(0.5) 
+            time.sleep(0.1) 
             mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
             sys.stdout.write('\r'+"Present pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3)))
@@ -96,7 +95,7 @@ class RunTitration:
         time.sleep(60*5) 
         print("One minute left until resuming titration.")
         time.sleep(60) 
-        input("Degassing completed.  Press any key to continue. -->")
+        input("Degassing completed.  Press Enter to continue. -->")
         mV = get_mV()
         TC = get_temp()
         newrow = pd.DataFrame(
@@ -104,8 +103,8 @@ class RunTitration:
              "mV" : [mV],
              "TC" : [TC]})
         datasheet = datasheet.append(newrow)
-        print("Resume titration.  Add ~20 digits at a time until pH = 3.")
-        print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file.")
+        print("\nResume titration.  Add acid every time you are prompted until pH = 3.")
+        print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file. /nMinimize vibration during titration phase!")
         while mV < pH_to_mV(3, Eo, TC):
             digits = digit_input()
             time.sleep(4)
@@ -118,9 +117,4 @@ class RunTitration:
             datasheet = datasheet.append(newrow)
             print("Present pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Titration Completed.")
-        try:
-            gran_plot(datasheet, self.mass, Eo).draw()
-            plt.pause(0.0001)
-        except:
-            print("Plotting is presently kaput.")
         return titrant_concentration, datasheet
