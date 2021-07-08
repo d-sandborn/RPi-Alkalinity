@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.5 Beta
+Version: v0.6 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -78,6 +78,7 @@ def residual_plot(datasheet, mass, Eo):
           +p9.geom_point(p9.aes(color = 'TC'), size = 5)
           +p9.geom_area(fill = 'lightblue', alpha = 0.5)
           +p9.geom_smooth(method = 'lm', se = False)
+          +p9.coord_cartesian(ylim = [-0.003, 0.003])
           +p9.annotate('text', x = np.mean(datasheet.x), y = max(datasheet.y), label = 'R^2 = ' + str(r2))
           +p9.labs(y = 'Gran Residuals', x = 'Acid Added (mL)', title = 'Gran Residuals Plot')
           +p9.theme_classic())

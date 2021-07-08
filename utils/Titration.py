@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.5 Beta
+Version: v0.6 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -15,6 +15,7 @@ from pathlib import Path
 import calkulate as calk
 import sys
 import matplotlib.pyplot as plt
+from utils.admin import countdown
 
 #Instruments
 from utils.Get_MCC128 import get_mV
@@ -81,20 +82,20 @@ class RunTitration:
              "TC" : [0]})
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
-        print("Approx. Initial pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
+        print("Initial pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
         print("Add acid with digital titrator until pH is less than 3.8.")
+        sigmas = np.array([0,0,0,0,0,0,0,0])
         while mV < pH_to_mV(3.8, Eo, TC): 
-            time.sleep(0.1) 
             mV = get_mV(boxcarnum = 100) #more frequent readings, not saved
             TC = get_temp()
-            sys.stdout.write('\r'+"Present pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3)))
+            sigmas = np.delete(sigmas, [0])
+            sigmas = np.append(sigmas, mV_to_pH(mV, Eo, TC))
+            sys.stdout.write('\r'+"pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3))+"T (°C): " + str(np.round(TC,2)) + "pH σ: " + str(np.round(sigmas.std(), 4)))
         print("\nStop titration.")
         print("System accepts titrator readings in Digits = mL*800.")
         digits = digit_input()        
         print("Continue stirring for 6 minutes for degassing.")
-        time.sleep(60*5) 
-        print("One minute left until resuming titration.")
-        time.sleep(60) 
+        countdown(6)
         input("Degassing completed.  Press Enter to continue. -->")
         mV = get_mV()
         TC = get_temp()
@@ -107,7 +108,7 @@ class RunTitration:
         print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file. /nMinimize vibration during titration phase!")
         while mV < pH_to_mV(3, Eo, TC):
             digits = digit_input()
-            time.sleep(4)
+            time.sleep(5)
             mV = get_mV()
             TC = get_temp()
             newrow = pd.DataFrame(

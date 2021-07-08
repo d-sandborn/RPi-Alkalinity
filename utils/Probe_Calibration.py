@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.3 (Pre-alpha)
+Version: v0.6 (Pre-alpha)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -14,6 +14,7 @@ import time
 import os
 from sklearn.linear_model import LinearRegression
 from pathlib import Path
+from utils.admin import countdown
 
 #Instruments
 from utils.Get_MCC128 import get_mV
@@ -47,8 +48,8 @@ class ProbeCalibration:
          Y = np.array([])
          for i in range(num_buffers):
              pH = float(input("What is the pH of the buffer? -->"))
-             print("Wait 2 minutes for measurement stabilization.")
-             time.sleep(60*2)
+             print("Wait 3 minutes for measurement stabilization.")
+             countdown(3)
              EMF = get_mV(boxcarnum = 600)/1000 #mV to V
              Y = np.append(Y,EMF)
              X = np.append(X,np.log(10**-pH))

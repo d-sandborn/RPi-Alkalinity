@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.5 (Beta)
+Version: v0.6 (Beta)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -32,8 +32,9 @@ from utils.Get_DS18B20 import get_temp
 header = "Alkalinity titration with RPi_Alkalinity system on "+str(date.today())
 
 #Initialize UI
-print("Welcome to RPi_Alkalinity.\nBeta Build 0.4")
-print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations.\n8) Quit")
+print("  _____  _____ _               _ _         _ _       _ _         \n |  __ \|  __ (_)        /\   | | |       | (_)     (_) |        \n | |__) | |__) | ______ /  \  | | | ____ _| |_ _ __  _| |_ _   _ \n |  _  /|  ___/ |______/ /\ \ | | |/ / _` | | | `_ \| | __| | | |\n | | \ \| |   | |     / ____ \| |   < (_| | | | | | | | |_| |_| |\n |_|  \_\_|   |_|    /_/    \_\_|_|\_\__,_|_|_|_| |_|_|\__|\__, |\n                                                            __/ |\n                                                (C)2021 des|___/ \n                                                           ")
+print("Welcome to RPi-Alkalinity.\nBeta Build 0.6")
+print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Titrations\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations\n8) Quit")
 
 choice = 0
 
@@ -61,7 +62,7 @@ while choice != 8:
         except:
             print("Plotting is presently kaput.")
         print("TA: \n", results[["file_name", "analyte_mass", "alkalinity"]], "\nμmol/kg")
-        input("Titration completed.  Press any key to return to the home screen.")
+        input("Titration completed.  Press Enter to return to the home screen.")
         
     elif choice == 2:
         """Calkulate all previous runs stored in Alkalinity_Meta.csv.
@@ -80,8 +81,6 @@ while choice != 8:
         
     elif choice == 4:
         """Output an example metadata row, indicative of the values in System_Info.csv."""
-        print("This function not fully supported.")
-        #Check metadata
         Alk_meta = AlkalinityMetadata("Undetermined", Path(os.getcwd()+"/data"), 0, "Undetermined")
         print(Alk_meta.new_meta.transpose())
         print("These options can be changed in Titration_Alkalinity_Meta.py\n ")
@@ -112,6 +111,6 @@ while choice != 8:
         chess()
         
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Datasheets\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations.\n8) Quit")
+    print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Titrations\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations\n8) Quit")
 
 
