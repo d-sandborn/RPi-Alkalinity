@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.6 (Beta)
+Version: v0.7 (Beta)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -33,7 +33,7 @@ header = "Alkalinity titration with RPi_Alkalinity system on "+str(date.today())
 
 #Initialize UI
 print("  _____  _____ _               _ _         _ _       _ _         \n |  __ \|  __ (_)        /\   | | |       | (_)     (_) |        \n | |__) | |__) | ______ /  \  | | | ____ _| |_ _ __  _| |_ _   _ \n |  _  /|  ___/ |______/ /\ \ | | |/ / _` | | | `_ \| | __| | | |\n | | \ \| |   | |     / ____ \| |   < (_| | | | | | | | |_| |_| |\n |_|  \_\_|   |_|    /_/    \_\_|_|\_\__,_|_|_|_| |_|_|\__|\__, |\n                                                            __/ |\n                                                (C)2021 des|___/ \n                                                           ")
-print("Welcome to RPi-Alkalinity.\nBeta Build 0.6")
+print("Welcome to RPi-Alkalinity.\nBeta Build 0.7")
 print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Titrations\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations\n8) Quit")
 
 choice = 0

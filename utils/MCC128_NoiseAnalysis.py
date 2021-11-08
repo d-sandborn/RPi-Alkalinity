@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.6 Beta
+Version: v0.7 Beta
 Licensed under {License info} for general use with attribution.
 
 MCC128 Noise Analyzer

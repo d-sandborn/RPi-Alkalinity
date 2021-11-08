@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.6 Beta
+Version: v0.7 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -90,7 +90,7 @@ class RunTitration:
             TC = get_temp()
             sigmas = np.delete(sigmas, [0])
             sigmas = np.append(sigmas, mV_to_pH(mV, Eo, TC))
-            sys.stdout.write('\r'+"pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3))+"T (°C): " + str(np.round(TC,2)) + "pH σ: " + str(np.round(sigmas.std(), 4)))
+            sys.stdout.write('\r'+"pH: "+ str(np.round(mV_to_pH(mV, Eo, TC),3))+" T (°C): " + str(np.round(TC,2)) + " pH σ: " + str(np.round(sigmas.std(), 4)))
         print("\nStop titration.")
         print("System accepts titrator readings in Digits = mL*800.")
         digits = digit_input()        
@@ -99,14 +99,18 @@ class RunTitration:
         input("Degassing completed.  Press Enter to continue. -->")
         mV = get_mV()
         TC = get_temp()
-        newrow = pd.DataFrame(
-            {"Vol" : [digits/800], #digits/800 = mL titrant
-             "mV" : [mV],
-             "TC" : [TC]})
-        datasheet = datasheet.append(newrow)
+        print("Temperature: ", TC, "°C")
+        print("Voltage: ", mV, "mV")
+        print("pH: ", np.round(mV_to_pH(mV, Eo, TC),3))
+        #newrow = pd.DataFrame(
+        #    {"Vol" : [digits/800], #digits/800 = mL titrant
+        #     "mV" : [mV],
+        #     "TC" : [TC]})
+        #datasheet = datasheet.append(newrow)
         print("\nResume titration.  Add acid every time you are prompted until pH = 3.")
-        print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file. /nMinimize vibration during titration phase!")
+        print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file. \nMinimize vibration during titration phase!")
         while mV < pH_to_mV(3, Eo, TC):
+            print("Add acid.")
             digits = digit_input()
             time.sleep(5)
             mV = get_mV()
