@@ -29,7 +29,7 @@ from utils.daqhats_utils import select_hat_device, enum_mask_to_string, \
 CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
-def get_mV(filtering = 'boxcar', boxcarnum = 300):
+def get_mV(filtering = 'boxcar', boxcarnum = 400):
     """
     Inputs
     ------
@@ -103,7 +103,7 @@ def get_mV(filtering = 'boxcar', boxcarnum = 300):
             stdout.flush()
             value_set[i] = reading
             sleep(0.01) #100 Hz; higher sampling rates introduce noise
-        value = value_set.mean()
+        value = value_set.median() #more outlier-resistant than mean
         
     return value*1000 #mV not V
         
