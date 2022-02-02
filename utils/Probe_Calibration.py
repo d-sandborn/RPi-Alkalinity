@@ -55,8 +55,9 @@ class ProbeCalibration:
              X = np.append(X,pH)
              print("Proceed to next buffer.")
          model = LinearRegression().fit(X.reshape(-1, 1),Y.reshape(-1, 1))
-         new_Eo = model.intercept_[0]
-         slope_factor = model.coef_[0][0]/0.059159346 #59.16 mV is the "Ideal Slope Factor" measuring Nernstian response, = ln(10)RT/F
+         TempK = get_temp()+273.15
+         new_Eo = model.intercept_[0]*np.log(10)*8.3144621*TempK/96485.33212
+         slope_factor = 1/model.coef_[0][0]/(np.log(10)*8.3144621*TempK/96485.33212) #59.16 mV is the "Ideal Slope Factor" measuring Nernstian response, = ln(10)RT/F
          new_date = date.today()
          system = pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))
          system.loc[0, 'probe_Eo'] = new_Eo
