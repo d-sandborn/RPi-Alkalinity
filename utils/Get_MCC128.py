@@ -1,6 +1,6 @@
 """
 RPi Alkalinity
-Version: v0.7 Beta
+Version: v0.8 Beta
 Licensed under {License info} for general use with attribution.
 
 This file contains code that is largely the work of Measurement Computing Corporation.
@@ -103,7 +103,7 @@ def get_mV(filtering = 'boxcar', boxcarnum = 400):
             stdout.flush()
             value_set[i] = reading
             sleep(0.01) #100 Hz; higher sampling rates introduce noise
-        value = value_set.median() #more outlier-resistant than mean
+        value = np.median(value_set) #more outlier-resistant than mean
         
     return value*1000 #mV not V
         

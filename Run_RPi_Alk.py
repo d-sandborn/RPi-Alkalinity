@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.7 (Beta)
+Version: v0.8 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -22,7 +22,7 @@ from utils.Titration_Alkalinity_Meta import AlkalinityMetadata
 from utils.Probe_Calibration import ProbeCalibration
 from utils.admin import say_hello, chess
 from utils.plotting import gran_plot, residual_plot
-from utils.manual_input import filename_input, mass_input, Eo_input
+from utils.manual_input import filename_input, mass_input, Eo_input, k_input
 
 #Instruments
 from utils.Get_MCC128 import get_mV
@@ -33,7 +33,7 @@ header = "Alkalinity titration with RPi_Alkalinity system on "+str(date.today())
 
 #Initialize UI
 print("  _____  _____ _               _ _         _ _       _ _         \n |  __ \|  __ (_)        /\   | | |       | (_)     (_) |        \n | |__) | |__) | ______ /  \  | | | ____ _| |_ _ __  _| |_ _   _ \n |  _  /|  ___/ |______/ /\ \ | | |/ / _` | | | `_ \| | __| | | |\n | | \ \| |   | |     / ____ \| |   < (_| | | | | | | | |_| |_| |\n |_|  \_\_|   |_|    /_/    \_\_|_|\_\__,_|_|_|_| |_|_|\__|\__, |\n                                                            __/ |\n                                                (C)2021 des|___/ \n                                                           ")
-print("Welcome to RPi-Alkalinity.\nBeta Build 0.7")
+print("Welcome to RPi-Alkalinity.\nBeta Build 0.8")
 print("Please select an option:\n1) Begin Titration\n2) Analyze Previous Titrations\n3) Check Instrument Connections\n4) Check Instrument/Sample Metadata\n5) Calibrate pH Probe\n6) View RPi-Alk credits\n7) Plot previous titrations\n8) Quit")
 
 choice = 0
@@ -57,8 +57,8 @@ while choice != 8:
         Alk_meta.Metadata_Export()
         results = titration.Analyze()
         try:
-            print(gran_plot(pd.read_csv(filepath/filename, sep = '\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
-            print(residual_plot(pd.read_csv(filepath/filename, sep = '\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
+            print(gran_plot(pd.read_csv(filepath/filename, sep = '\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_slope_factor'][0], pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
+            print(residual_plot(pd.read_csv(filepath/filename, sep = '\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_slope_factor'][0], pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
         except:
             print("Plotting is presently kaput.")
         print("TA: \n", results[["file_name", "analyte_mass", "alkalinity"]], "\nμmol/kg")
@@ -76,7 +76,8 @@ while choice != 8:
         EMF = get_mV()
         TC = get_temp()
         Eo =  pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]
-        print("pH probe:", round((EMF),5), "mV / pH", np.round(mV_to_pH(EMF, Eo, TC),3))
+        k = pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_slope_factor'][0]
+        print("pH probe:", round((EMF),2), "mV / pH", np.round(mV_to_pH(EMF, Eo, k, TC),3))
         print("Titration Beaker Thermistor:", round(TC,1), "°C")
         
     elif choice == 4:
@@ -98,9 +99,10 @@ while choice != 8:
         filepath = Path(os.getcwd()+"/data/")
         mass = mass_input()
         Eo = Eo_input()
+        k = k_input()
         try:
-            print(gran_plot(pd.read_csv(filepath/filename, sep = '\t'), mass, Eo))
-            print(residual_plot(pd.read_csv(filepath/filename, sep = '\t'), mass, Eo))
+            print(gran_plot(pd.read_csv(filepath/filename, sep = '\t'), mass, k, Eo))
+            print(residual_plot(pd.read_csv(filepath/filename, sep = '\t'), mass, k, Eo))
         except:
             print("Plotting is presently kaput.")
     

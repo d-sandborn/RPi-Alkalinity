@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.7 Beta
+Version: v0.8 Beta
 
 Tool for retrieval of temperature readings from DS18B20 waterproof thermistor.
 

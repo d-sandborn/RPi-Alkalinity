@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.7 Beta
+Version: v0.8 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2021)
@@ -13,7 +13,7 @@ from utils.conversions import mV_to_pH, pH_to_mV
 from sklearn import linear_model
 from sklearn.metrics import r2_score
 
-def gran_plot(datasheet, mass, Eo):
+def gran_plot(datasheet, mass, k, Eo):
     """
     Plots the the linear portion of a Gran Plot.
 
@@ -34,7 +34,7 @@ def gran_plot(datasheet, mass, Eo):
     """
     datasheet = datasheet.drop([0]) #drop first filler row
     datasheet['x'] = datasheet.Vol
-    datasheet['y'] = (mass+datasheet.Vol)*10**(-mV_to_pH(datasheet.mV, Eo, datasheet.TC))#gran function
+    datasheet['y'] = (mass+datasheet.Vol)*10**(-mV_to_pH(datasheet.mV, Eo, k, datasheet.TC))#gran function
     regr = linear_model.LinearRegression()
     regr.fit(np.array(datasheet.x).reshape(-1,1), np.array(datasheet.y))
     datasheet['y_pred'] = regr.predict(np.array(datasheet.x).reshape(-1,1))
@@ -47,7 +47,7 @@ def gran_plot(datasheet, mass, Eo):
           +p9.theme_classic())
     return p1
 
-def residual_plot(datasheet, mass, Eo):
+def residual_plot(datasheet, mass, k, Eo):
     """
     Plots the residual values of the linear portion of a Gran Plot.
 
@@ -68,7 +68,7 @@ def residual_plot(datasheet, mass, Eo):
     """
     datasheet = datasheet.drop([0]) #drop first filler row
     datasheet['x'] = datasheet.Vol
-    datasheet['Gran'] = (mass+datasheet.Vol)*10**(-mV_to_pH(datasheet.mV, Eo, datasheet.TC)) #gran function
+    datasheet['Gran'] = (mass+datasheet.Vol)*10**(-mV_to_pH(datasheet.mV, Eo, k, datasheet.TC)) #gran function
     regr = linear_model.LinearRegression()
     regr.fit(np.array(datasheet.x).reshape(-1,1), np.array(datasheet.Gran))
     datasheet['y_pred'] = regr.predict(np.array(datasheet.x).reshape(-1,1))
