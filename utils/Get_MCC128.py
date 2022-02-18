@@ -1,6 +1,6 @@
 """
 RPi Alkalinity
-Version: v0.8 Beta
+Version: v0.81 Beta
 Licensed under {License info} for general use with attribution.
 
 This file contains code that is largely the work of Measurement Computing Corporation.
@@ -16,7 +16,7 @@ This file contains code that is largely the work of Measurement Computing Corpor
         to read a single value from each selected channel on each iteration
         of the loop.
 """
-#Basics
+# Basics
 from time import sleep
 from sys import stdout
 import numpy as np
@@ -29,7 +29,8 @@ from utils.daqhats_utils import select_hat_device, enum_mask_to_string, \
 CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
-def get_mV(filtering = 'boxcar', boxcarnum = 400):
+
+def get_mV(filtering='boxcar', boxcarnum=400):
     """
     Inputs
     ------
@@ -37,7 +38,7 @@ def get_mV(filtering = 'boxcar', boxcarnum = 400):
         Enables software signal filtering of electrode signal.  
         Accepted values: "boxcar"
         Default value: "boxcar"
-        
+
     Optional: boxcarnum, int
         Sets boxcar filtering width, in approximately centiseconds.
         Default value: 300
@@ -56,11 +57,11 @@ def get_mV(filtering = 'boxcar', boxcarnum = 400):
     options = OptionFlags.DEFAULT
     low_chan = 0
     high_chan = 3
-    input_mode = AnalogInputMode.DIFF #CHANGED FROM SE
-    input_range = AnalogInputRange.BIP_1V #CHANGED FROM 10V TO 1V
+    input_mode = AnalogInputMode.DIFF  # CHANGED FROM SE
+    input_range = AnalogInputRange.BIP_1V  # CHANGED FROM 10V TO 1V
 
     mcc_128_num_channels = mcc128.info().NUM_AI_CHANNELS[input_mode]
-    
+
     try:
         # Ensure low_chan and high_chan are valid.
         if low_chan < 0 or low_chan >= mcc_128_num_channels:
@@ -82,7 +83,7 @@ def get_mV(filtering = 'boxcar', boxcarnum = 400):
 
         hat.a_in_mode_write(input_mode)
         hat.a_in_range_write(input_range)
-        
+
         try:
             value = hat.a_in_read(low_chan, options)
             stdout.flush()
@@ -93,20 +94,20 @@ def get_mV(filtering = 'boxcar', boxcarnum = 400):
 
     except (HatError, ValueError) as error:
         print('\n', error)
-        
-        
-    #boxcar filtering option
+
+    # boxcar filtering option
     if filtering == 'boxcar':
         value_set = np.empty([boxcarnum])
         for i in range(boxcarnum):
             reading = hat.a_in_read(low_chan, options)
             stdout.flush()
             value_set[i] = reading
-            sleep(0.01) #100 Hz; higher sampling rates introduce noise
-        value = np.median(value_set) #more outlier-resistant than mean
-        
-    return value*1000 #mV not V
-        
+            sleep(0.01)  # 100 Hz; higher sampling rates introduce noise
+        value = np.median(value_set)  # more outlier-resistant than mean
+
+    return value*1000  # mV not V
+
+
 def hat_test():
     """
     Taken from daqhats repo.  Cycles through all of the channels of the MCC128
@@ -125,8 +126,8 @@ def hat_test():
     options = OptionFlags.DEFAULT
     low_chan = 0
     high_chan = 3
-    input_mode = AnalogInputMode.DIFF #CHANGED FROM SE
-    input_range = AnalogInputRange.BIP_1V #CHANGED FROM 10V TO 1V
+    input_mode = AnalogInputMode.DIFF  # CHANGED FROM SE
+    input_range = AnalogInputRange.BIP_1V  # CHANGED FROM 10V TO 1V
 
     mcc_128_num_channels = mcc128.info().NUM_AI_CHANNELS[input_mode]
     sample_interval = 0.5  # Seconds

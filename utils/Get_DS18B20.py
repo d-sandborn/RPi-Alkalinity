@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.8 Beta
+Version: v0.81 Beta
 
 Tool for retrieval of temperature readings from DS18B20 waterproof thermistor.
 
@@ -11,20 +11,22 @@ This code is largely the work of Measurement Computing Corporation.
 import os
 import glob
 import time
- 
+
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
- 
+
 base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
- 
+
+
 def read_temp_raw():
     f = open(device_file, 'r')
     lines = f.readlines()
     f.close()
     return lines
- 
+
+
 def get_temp():
     lines = read_temp_raw()
     while lines[0].strip()[-3:] != 'YES':

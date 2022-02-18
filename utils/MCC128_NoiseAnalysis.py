@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.8 Beta
+Version: v0.81 Beta
 Licensed under {License info} for general use with attribution.
 
 MCC128 Noise Analyzer
 Aquires a high-density timeseries of voltage measurements from a channel on
 the MCC128 DAQ HAT and applies a FFT to identify potential noise frequencies.
 """
-#Basics
+# Basics
 from time import sleep
 from sys import stdout
 import pandas as pd
@@ -24,11 +24,12 @@ CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
 sample_int = 0.1
-timeseries_len  = 10
+timeseries_len = 10
 
-def get_mV_timeseries(sample_interval = 0.1, timeseries_length = 10):
+
+def get_mV_timeseries(sample_interval=0.1, timeseries_length=10):
     """
-    
+
 
     Parameters
     ----------
@@ -51,11 +52,11 @@ def get_mV_timeseries(sample_interval = 0.1, timeseries_length = 10):
     options = OptionFlags.DEFAULT
     low_chan = 0
     high_chan = 3
-    input_mode = AnalogInputMode.SE #SE/single-ended DIFF/differential
-    input_range = AnalogInputRange.BIP_1V #CHANGED FROM 10V TO 1V
+    input_mode = AnalogInputMode.SE  # SE/single-ended DIFF/differential
+    input_range = AnalogInputRange.BIP_1V  # CHANGED FROM 10V TO 1V
 
     mcc_128_num_channels = mcc128.info().NUM_AI_CHANNELS[input_mode]
-    
+
     try:
         # Ensure low_chan and high_chan are valid.
         if low_chan < 0 or low_chan >= mcc_128_num_channels:
@@ -77,7 +78,7 @@ def get_mV_timeseries(sample_interval = 0.1, timeseries_length = 10):
 
         hat.a_in_mode_write(input_mode)
         hat.a_in_range_write(input_range)
-        
+
         try:
             value_array = np.empty([timeseries_length/sample_interval])
             for i in range(timeseries_length/sample_interval):
@@ -91,18 +92,19 @@ def get_mV_timeseries(sample_interval = 0.1, timeseries_length = 10):
 
     except (HatError, ValueError) as error:
         print('\n', error)
-        
-        
+
     return value_array
 
-x = np.linspace(0, timeseries_len, num = timeseries_len/sample_int)
-y = get_mV_timeseries(sample_interval = sample_int, timeseries_length = timeseries_len)
+
+x = np.linspace(0, timeseries_len, num=timeseries_len/sample_int)
+y = get_mV_timeseries(sample_interval=sample_int,
+                      timeseries_length=timeseries_len)
 yf = fft(y)
-xf = fftfreq(timeseries_len, sample_int)#[:N//2]
+xf = fftfreq(timeseries_len, sample_int)  # [:N//2]
 
 df = pd.DataFrame({
     'x': x,
     'y': y,
     'xf': xf,
     'yf': np.abs(yf)
-    })
+})

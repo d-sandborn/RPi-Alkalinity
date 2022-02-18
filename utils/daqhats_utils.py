@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.8 Beta
+Version: v0.81 Beta
 
 This file contains helper functions for the MCC DAQ HAT Python examples.
 This code is entirely the work of Measurement Computing Corporation.
@@ -111,6 +111,7 @@ def chan_list_to_mask(chan_list):
 
     return chan_mask
 
+
 def input_mode_to_string(input_mode):
     """
     # type: (int) -> string
@@ -131,6 +132,7 @@ def input_mode_to_string(input_mode):
         mode_str = "Invalid"
 
     return mode_str
+
 
 def input_range_to_string(input_range):
     """
@@ -156,6 +158,7 @@ def input_range_to_string(input_range):
         range_str = "Invalid"
 
     return range_str
+
 
 def validate_channels(channel_set, number_of_channels):
     # type: (set, int) -> None

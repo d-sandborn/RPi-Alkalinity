@@ -1,2 +1,2 @@
 Unnamed: 0,titrant_NaCl_molinity,titrant_HCl_molinity,probe_Eo,probe_last_calibrated,opt_total_borate,opt_k_carbonic,opt_k_fluoride,opt_k_bisulfate,dic,probe_slope_factor
-0,0,0.24832,0.91,3/5/2021,2,8,2,1,1000,1
+0,0.0,0.24832,0.91,3/5/2021,2,8.0,2,1.0,1000,1.0

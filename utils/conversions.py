@@ -16,7 +16,7 @@ R = 8.3144621
 F = 96485.33212
 
 def mV_to_pH(mV, Eo, k, TC = 25.0):
-    pH = (mV/1000-Eo)/(np.log(10)*R*(TC+273.15)*k/F)
+    pH = -(mV/1000-Eo)/(np.log(10)*R*(TC+273.15)*k/F)
     return pH
 
 def pH_to_mV(pH, Eo, k, TC = 25.0):

@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.8 (Beta)
+Version: v0.81 (Beta)
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
-    Sandborn, D.E., Minor E.C., Hill, C. (2021)
+    Sandborn, D.E., Minor E.C., Hill, C. (2022)
 """
 import numpy as np
 import time
 import sys
+
 
 def say_hello():
     print("  _____  _____ _               _ _         _ _       _ _         \n |  __ \|  __ (_)        /\   | | |       | (_)     (_) |        \n | |__) | |__) | ______ /  \  | | | ____ _| |_ _ __  _| |_ _   _ \n |  _  /|  ___/ |______/ /\ \ | | |/ / _` | | | `_ \| | __| | | |\n | | \ \| |   | |     / ____ \| |   < (_| | | | | | | | |_| |_| |\n |_|  \_\_|   |_|    /_/    \_\_|_|\_\__,_|_|_|_| |_|_|\__|\__, |\n                                                            __/ |\n                                                (C)2021 des|___/ \n                                                           ")
@@ -19,13 +20,15 @@ def say_hello():
     print(tech)
     contact = "This program is freely available on Github at \nwww.github.com/d-sandborn/RPi-Alkalinity.  Questions can be addressed to sandb425@umn.edu.  "
     print(contact)
-    
+
+
 def chess():
     print("Greetings Professor Falken.  Would you like to play a game?")
     response = input("--> ")
     if "war" in response:
         print("Wouldn't you prefer a good game of chess?")
-        
+
+
 def countdown(minutes):
     seconds_list = np.flip(np.linspace(0, minutes*60-1, minutes*60))
     for i in seconds_list:
