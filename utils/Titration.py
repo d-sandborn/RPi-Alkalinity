@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.81 Beta
+Version: v0.82 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2022)
@@ -65,7 +65,7 @@ class RunTitration:
 
         Three titration phases occur:
             1) System setup.  Instruments are inserted into reaction system and temperature should stabilize.
-            2) Titration to pH 3.8.  Acid is added until the sample pH is < 3.6.
+            2) Titration to pH 3.8.  Acid is added until the sample pH is < 3.8.
             3) Titration to pH 3.  Acid is added in small intervals until the sample pH is < 3.  
 
         Returns
@@ -118,6 +118,14 @@ class RunTitration:
         #datasheet = datasheet.append(newrow)
         print("\nResume titration.  Add acid every time you are prompted until pH = 3.")
         print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file. \nMinimize vibration during titration phase!")
+        while mV < pH_to_mV(3.5, Eo, k, TC):
+            #Don't record data with pH > 3.5
+            print("Add acid.")
+            digits = digit_input()
+            time.sleep(5)
+            mV = get_mV()
+            TC = get_temp()
+            print("Present pH: ", np.round(mV_to_pH(mV, Eo, k, TC), 3))
         while mV < pH_to_mV(3, Eo, k, TC):
             print("Add acid.")
             digits = digit_input()

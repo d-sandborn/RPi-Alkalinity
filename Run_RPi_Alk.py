@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.81 Beta
+Version: v0.82 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2022)
@@ -61,8 +61,6 @@ while choice != 9:
         try:
             print(gran_plot(pd.read_csv(filepath/filename, sep='\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))
                   ['probe_slope_factor'][0], pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
-            print(residual_plot(pd.read_csv(filepath/filename, sep='\t'), titration.mass, pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))
-                  ['probe_slope_factor'][0], pd.read_csv(Path(os.getcwd()+"/utils/System_Info.csv"))['probe_Eo'][0]))
         except:
             print("Plotting is presently kaput.")
         print("TA: \n", results[["file_name",
@@ -113,8 +111,6 @@ while choice != 9:
         k = k_input()
         try:
             print(gran_plot(pd.read_csv(filepath/filename, sep='\t'), mass, k, Eo))
-            print(residual_plot(pd.read_csv(
-                filepath/filename, sep='\t'), mass, k, Eo))
         except:
             print("Plotting is presently kaput.")
 
