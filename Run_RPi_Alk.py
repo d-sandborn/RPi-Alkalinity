@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.82 Beta
+Version: v0.9 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2022)
@@ -21,20 +21,19 @@ from utils.conversions import mV_to_pH
 from utils.Titration_Alkalinity_Meta import AlkalinityMetadata
 from utils.Probe_Calibration import ProbeCalibration
 from utils.admin import say_hello, chess
-from utils.plotting import gran_plot, residual_plot
+from utils.plotting import gran_plot, TicTacToe
 from utils.manual_input import filename_input, mass_input, Eo_input, k_input, system_set
 
 # Instruments
 from utils.Get_MCC128 import get_mV
 from utils.Get_DS18B20 import get_temp
 
-
+pd.set_option('display.max_rows', None) #tell Pandas not to abridge tables.
 header = "Alkalinity titration with RPi_Alkalinity system on " + \
     str(date.today())
 
 # Initialize UI
-print("  _____  _____ _               _ _         _ _       _ _         \n |  __ \|  __ (_)        /\   | | |       | (_)     (_) |        \n | |__) | |__) | ______ /  \  | | | ____ _| |_ _ __  _| |_ _   _ \n |  _  /|  ___/ |______/ /\ \ | | |/ / _` | | | `_ \| | __| | | |\n | | \ \| |   | |     / ____ \| |   < (_| | | | | | | | |_| |_| |\n |_|  \_\_|   |_|    /_/    \_\_|_|\_\__,_|_|_|_| |_|_|\__|\__, |\n                                                            __/ |\n                                                (C)2022 DES|___/ \n                                                           ")
-print("Welcome to RPi-Alkalinity.\nBeta Build 0.81")
+say_hello()
 print("Please select an option:\n1) Begin titration\n2) Analyze previous titrations\n3) Check instruments\n4) Check sample metadata\n5) Calibrate pH probe\n6) View RPi-Alk credits\n7) Plot previous titrations\n8) Change system settings\n9) Quit")
 
 choice = 0
@@ -64,14 +63,13 @@ while choice != 9:
         except:
             print("Plotting is presently kaput.")
         print("TA: \n", results[["file_name",
-              "analyte_mass", "alkalinity"]], "\nμmol/kg")
+              "analyte_mass", "alkalinity"]])
         input("Titration completed.  Press Enter to return to the home screen.")
 
     elif choice == 2:
-        """Calkulate all previous runs stored in Alkalinity_Meta.csv.
-        This could take a while, depending on how many runs there are."""
+        """Calkulate all previous runs stored in Alkalinity_Meta.csv."""
         data = calk.read_csv(Path(os.getcwd()+"/data/Alkalinity_Meta.csv"))
-        data.solve()
+        data.get_total_salts().solve()
         print(data[["file_name", "analyte_mass", "alkalinity"]])
 
     elif choice == 3:
@@ -84,7 +82,7 @@ while choice != 9:
                         )['probe_slope_factor'][0]
         print("pH probe:", round((EMF), 2), "mV / pH",
               np.round(mV_to_pH(EMF, Eo, k, TC), 3))
-        print("Thermistor:", round(TC, 1), "°C")
+        print("Thermistor:", round(TC, 3), "°C")
 
     elif choice == 4:
         """Output an example metadata row, indicative of the values in System_Info.csv."""
@@ -123,6 +121,12 @@ while choice != 9:
 
     elif choice == 32:
         chess()
+    
+    elif choice == 1983:
+        TicTacToe().start()
+        
+    elif choice == 88224646:
+        print("Sorry, the Konami Code will not improve your titrations.")
 
     print(")`'-.,_)`'-.,_)`'-.,_)`'-.,_)`'-.,_)`'-.,_)`'-.,_)`'-.,_)`'-.,_")
     print("Please select an option:\n1) Begin titration\n2) Analyze previous titrations\n3) Check instruments\n4) Check sample metadata\n5) Calibrate pH probe\n6) View RPi-Alk credits\n7) Plot previous titrations\n8) Change system settings\n9) Quit")

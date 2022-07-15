@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.82 Beta
+Version: v0.9 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2022)
@@ -198,3 +198,5 @@ def system_set():
                 print("System_Info.csv updated.")
             except ValueError:
                 print("ERROR You have entered an invalid input.")
+        if choice == 0:
+            print("Hey!  Who gave you the idea of hitting zero on my keyboard?\nDon't you know zero isn't an option?  The nerve of this user!\nDo you think I just sit around all day waiting for you to type\nnonsense?  If this keeps up I'm gonna... well...\nYou know, I don't really have any means of recourse...")

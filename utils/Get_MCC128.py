@@ -1,6 +1,6 @@
 """
 RPi Alkalinity
-Version: v0.82 Beta
+Version: v0.9 Beta
 Licensed under {License info} for general use with attribution.
 
 This file contains code that is largely the work of Measurement Computing Corporation.

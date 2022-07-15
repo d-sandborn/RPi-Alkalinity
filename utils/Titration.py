@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.82 Beta
+Version: v0.9 Beta
 Licensed under {License info} for general use with attribution.
 For works using this code please cite:
     Sandborn, D.E., Minor E.C., Hill, C. (2022)
@@ -38,9 +38,16 @@ def pH_to_mV(pH, Eo, k, TC=25.0):
 
 class RunTitration:
     def __init__(self):
-        mass = mass_input()
+        mass = mass_input() #in grams
         self.mass = mass
-        SampleID = input("Sample ID? --> ")
+        file_exists = True
+        while file_exists: #check if a titration by this name already exists
+            SampleID = input("Sample ID? --> ")
+            if os.path.exists(SampleID+".txt"):
+                print("This Sample ID already exists.")
+                file_exists = True
+            else:
+                file_exists = False
         self.SampleID = SampleID
         salinity = salinity_input()
         self.salinity = salinity
@@ -53,7 +60,7 @@ class RunTitration:
     # Humphreys, M. P. and Matthews, R. S. (2020). Calkulate: total alkalinity from titration data in Python. Zenodo. doi:10.5281/zenodo.2634304.
     def Analyze(self):
         data = calk.read_csv(Path(os.getcwd()+"/data/Alkalinity_Meta.csv"))
-        data.solve()
+        data.get_total_salts().solve()
         return data
 
     def Titrate(self):
@@ -80,7 +87,7 @@ class RunTitration:
         Eo = system['probe_Eo'][0]
         k = system['probe_slope_factor'][0]
         titrant_concentration = system['titrant_HCl_molinity'][0]
-        print("Please ensure that pH probe and thermistor\nare submersed, temperature is stable, and stir bar is spinning at max speed.")
+        print("Please ensure that pH probe and thermistor are submersed,\nthermostat pump is running, and stir bar is vortexing.")
         input("Press Enter to continue.")
         mV = get_mV()
         TC = get_temp()
