@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.9 Beta
-Licensed under {License info} for general use with attribution.
+Version: v1.0
+Licensed under GPL-3.0 for general use with attribution.
+For works using this code please cite:
+    Sandborn, D.E., Minor E.C., Hill, C. (2023)
 
 MCC128 Noise Analyzer
 Aquires a high-density timeseries of voltage measurements from a channel on

@@ -1,7 +1,9 @@
 """
 RPi Alkalinity
-Version: v0.9 Beta
-Licensed under {License info} for general use with attribution.
+Version: v1.0
+Licensed under GPL-3.0 for general use with attribution.
+For works using this code please cite:
+    Sandborn, D.E., Minor E.C., Hill, C. (2023)
 
 This file contains code that is largely the work of Measurement Computing Corporation.
 
@@ -30,7 +32,7 @@ CURSOR_BACK_2 = '\x1b[2D'
 ERASE_TO_END_OF_LINE = '\x1b[0K'
 
 
-def get_mV(filtering='boxcar', boxcarnum=400):
+def get_mV(filtering='boxcar', boxcarnum=500):
     """
     Inputs
     ------
@@ -41,7 +43,7 @@ def get_mV(filtering='boxcar', boxcarnum=400):
 
     Optional: boxcarnum, int
         Sets boxcar filtering width, in approximately centiseconds.
-        Default value: 300
+        Default value: 500
 
     Raises
     ------

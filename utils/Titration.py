@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 RPi Alkalinity
-Version: v0.9 Beta
-Licensed under {License info} for general use with attribution.
+Version: v1.0
+Licensed under GPL-3.0 for general use with attribution.
 For works using this code please cite:
-    Sandborn, D.E., Minor E.C., Hill, C. (2022)
+    Sandborn, D.E., Minor E.C., Hill, C. (2023)
 """
 
 import numpy as np
@@ -98,9 +98,9 @@ class RunTitration:
         print("Initial Temperature: ", TC, "°C")
         print("Initial Voltage: ", mV, "mV")
         print("Initial pH: ", np.round(mV_to_pH(mV, Eo, k, TC), 3))
-        print("Add acid with digital titrator until pH is less than 3.8.")
+        print("Add acid with digital titrator until pH is less than 3.9.")
         sigmas = np.array([0, 0, 0, 0, 0, 0, 0, 0])
-        while mV < pH_to_mV(3.8, Eo, k, TC):
+        while mV < pH_to_mV(3.9, Eo, k, TC):
             mV = get_mV(boxcarnum=100)  # more frequent readings, not saved
             TC = get_temp()
             sigmas = np.delete(sigmas, [0])
@@ -118,25 +118,20 @@ class RunTitration:
         print("Temperature: ", TC, "°C")
         print("Voltage: ", mV, "mV")
         print("pH: ", np.round(mV_to_pH(mV, Eo, k, TC), 3))
-        # newrow = pd.DataFrame(
-        #    {"Vol" : [digits/800], #digits/800 = mL titrant
-        #     "mV" : [mV],
-        #     "TC" : [TC]})
-        #datasheet = datasheet.append(newrow)
         print("\nResume titration.  Add acid every time you are prompted until pH = 3.")
         print("If an error is made, continue with the titration.\nCorrections can be made manually to the .txt file. \nMinimize vibration during titration phase!")
-        while mV < pH_to_mV(3.5, Eo, k, TC):
-            #Don't record data with pH > 3.5
+        while mV < pH_to_mV(3.6, Eo, k, TC):
+            #Don't record data with pH > 3.6
             print("Add acid.")
             digits = digit_input()
-            time.sleep(5)
+            time.sleep(4)
             mV = get_mV()
             TC = get_temp()
             print("Present pH: ", np.round(mV_to_pH(mV, Eo, k, TC), 3))
         while mV < pH_to_mV(3, Eo, k, TC):
             print("Add acid.")
             digits = digit_input()
-            time.sleep(5)
+            time.sleep(6)
             mV = get_mV()
             TC = get_temp()
             newrow = pd.DataFrame(
